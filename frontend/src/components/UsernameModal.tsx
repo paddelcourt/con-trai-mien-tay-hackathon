@@ -60,8 +60,8 @@ export default function UsernameModal({ onSubmit }: UsernameModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100] p-4">
-      <div className="bg-[#2f2f2f] rounded-xl md:rounded-2xl p-4 md:p-6 w-full max-w-sm animate-fade-in">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+      <div className="bg-[#2f2f2f] rounded-xl md:rounded-2xl p-4 md:p-6 w-full max-w-sm animate-fade-in shadow-2xl border border-[#383838]">
         <h2 className="text-base md:text-lg font-semibold text-[#ececec] mb-1 text-center">
           Welcome to Guess The Prompt
         </h2>
