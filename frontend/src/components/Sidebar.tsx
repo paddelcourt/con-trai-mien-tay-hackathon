@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import LeaderboardModal from './LeaderboardModal';
 import DatasetModal from './DatasetModal';
 
@@ -119,6 +120,18 @@ export default function Sidebar({
             </svg>
           </button>
 
+          {/* Multiplayer */}
+          <Link
+            href="/multiplayer"
+            className="p-2.5 rounded-lg hover:bg-[#212121] transition-colors text-[#8e8e8e] mb-1 flex items-center justify-center"
+            title="Multiplayer"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="9" cy="7" r="4"/><circle cx="17" cy="7" r="4"/>
+              <path d="M3 21v-2a4 4 0 0 1 4-4h4"/><path d="M15 11h4a4 4 0 0 1 4 4v2"/>
+            </svg>
+          </Link>
+
           {/* Spacer */}
           <div className="flex-1" />
 
@@ -206,6 +219,20 @@ export default function Sidebar({
             </svg>
             Dataset
           </button>
+        </div>
+
+        {/* Multiplayer Button */}
+        <div className="px-2 mb-1">
+          <Link
+            href="/multiplayer"
+            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#212121] transition-colors text-[#8e8e8e] text-[13px]"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="9" cy="7" r="4"/><circle cx="17" cy="7" r="4"/>
+              <path d="M3 21v-2a4 4 0 0 1 4-4h4"/><path d="M15 11h4a4 4 0 0 1 4 4v2"/>
+            </svg>
+            Multiplayer
+          </Link>
         </div>
 
         {/* Timer Section */}

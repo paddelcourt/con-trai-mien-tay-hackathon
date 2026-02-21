@@ -134,3 +134,166 @@ export async function checkHealth(): Promise<{ status: string; provider: string 
   }
   return response.json();
 }
+
+// ============================================================
+// Multiplayer API helpers
+// ============================================================
+
+export interface MpPlayer {
+  id: string;
+  username: string;
+  country: string;
+  status: 'idle' | 'challenged' | 'in_game';
+  updated_at: string;
+}
+
+export interface MpChallenge {
+  id: string;
+  challenger_id: string;
+  challenged_id: string;
+  status: 'pending' | 'accepted' | 'rejected';
+}
+
+export interface MpGame {
+  id: string;
+  player1_id: string;
+  player2_id: string;
+  player1_name: string;
+  player2_name: string;
+  player1_country: string;
+  player2_country: string;
+  player1_score: number;
+  player2_score: number;
+  current_round: number;
+  total_rounds: number;
+  current_round_id: string;
+  phase: 'waiting' | 'playing' | 'round_over' | 'game_over';
+  round_winner_id: string | null;
+  winner_id: string | null;
+  updated_at: string;
+}
+
+export interface MpRoundGuess {
+  id: string;
+  game_id: string;
+  player_id: string;
+  player_name: string;
+  round_num: number;
+  guess: string;
+  score: number | null;
+  is_correct: boolean;
+  feedback: string | null;
+  hint: string | null;
+  submitted_at: string;
+}
+
+export interface MpGuessResult {
+  score: number;
+  feedback: string;
+  hint: string;
+  isCorrect: boolean;
+  actualPrompt?: string;
+}
+
+// Register player in the lobby
+export async function registerMpPlayer(
+  username: string,
+  country: string
+): Promise<{ playerId: string }> {
+  const response = await fetch(`${API_BASE}/api/multiplayer/player`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, country }),
+  });
+  if (!response.ok) throw new Error('Failed to register multiplayer player');
+  return response.json();
+}
+
+// Remove player from lobby
+export async function removeMpPlayer(playerId: string): Promise<void> {
+  await fetch(`${API_BASE}/api/multiplayer/player`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ playerId }),
+  });
+}
+
+// Send heartbeat to keep player alive in lobby
+export async function sendHeartbeat(playerId: string): Promise<void> {
+  await fetch(`${API_BASE}/api/multiplayer/player/${playerId}/heartbeat`, {
+    method: 'POST',
+  });
+}
+
+// Send a challenge to another player
+export async function sendChallenge(
+  challengerId: string,
+  challengedId: string
+): Promise<{ challengeId: string }> {
+  const response = await fetch(`${API_BASE}/api/multiplayer/challenge`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ challengerId, challengedId }),
+  });
+  if (!response.ok) throw new Error('Failed to send challenge');
+  return response.json();
+}
+
+// Accept or reject a challenge
+export async function respondToChallenge(
+  challengeId: string,
+  action: 'accepted' | 'rejected'
+): Promise<{ success: boolean; challenge: MpChallenge }> {
+  const response = await fetch(`${API_BASE}/api/multiplayer/challenge`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ challengeId, action }),
+  });
+  if (!response.ok) throw new Error('Failed to respond to challenge');
+  return response.json();
+}
+
+// Create a new multiplayer game
+export async function createMpGame(
+  player1Id: string,
+  player2Id: string,
+  player1Name: string,
+  player2Name: string,
+  player1Country: string,
+  player2Country: string,
+  totalRounds?: number
+): Promise<{ gameId: string; aiResponse: string; roundId: string }> {
+  const response = await fetch(`${API_BASE}/api/multiplayer/game`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      player1Id, player2Id, player1Name, player2Name,
+      player1Country, player2Country, totalRounds,
+    }),
+  });
+  if (!response.ok) throw new Error('Failed to create multiplayer game');
+  return response.json();
+}
+
+// Submit a guess in a multiplayer game
+export async function submitMpGuess(
+  gameId: string,
+  playerId: string,
+  playerName: string,
+  guess: string
+): Promise<MpGuessResult> {
+  const response = await fetch(`${API_BASE}/api/multiplayer/game/${gameId}/guess`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ playerId, playerName, guess }),
+  });
+  if (!response.ok) throw new Error('Failed to submit multiplayer guess');
+  return response.json();
+}
+
+// Signal that a client is ready for the next round (after round_over countdown)
+export async function advanceToNextRound(gameId: string): Promise<void> {
+  await fetch(`${API_BASE}/api/multiplayer/game/${gameId}/next-round`, {
+    method: 'POST',
+  });
+}
