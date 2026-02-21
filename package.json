@@ -1,0 +1,33 @@
+{
+  "name": "con-trai-mien-tay-hackathon",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.46",
+    "@ai-sdk/openai": "^3.0.30",
+    "@anthropic-ai/sdk": "^0.37.0",
+    "ai": "^6.0.97",
+    "better-sqlite3": "^11.0.0",
+    "flag-icons": "^7.2.3",
+    "next": "15.1.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.7",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
