@@ -35,11 +35,11 @@ export default function PromptInput({ onSubmit, disabled = false, placeholder }:
 
   return (
     <div className="w-full max-w-3xl mx-auto px-3 md:px-4">
-      <div className="relative bg-[#2f2f2f] rounded-2xl md:rounded-3xl border border-[#383838] focus-within:border-[#565656] transition-colors">
-        <div className="flex items-end gap-2 p-2 md:p-3">
+      <div className="relative bg-[#2f2f2f] rounded-xl md:rounded-2xl border border-[#383838] focus-within:border-[#565656] transition-colors">
+        <div className="flex items-end gap-1.5 p-1.5 md:p-2">
           {/* Attach button - hidden on mobile */}
-          <button className="hidden md:flex flex-shrink-0 p-2 rounded-lg hover:bg-[#383838] transition-colors text-[#b4b4b4] hover:text-[#ececec]">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <button className="hidden md:flex flex-shrink-0 p-1.5 rounded-md hover:bg-[#383838] transition-colors text-[#b4b4b4] hover:text-[#ececec]">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12h14"/>
             </svg>
           </button>
@@ -53,10 +53,10 @@ export default function PromptInput({ onSubmit, disabled = false, placeholder }:
             disabled={disabled}
             placeholder={placeholder || "Guess the prompt..."}
             rows={1}
-            className="flex-1 bg-transparent resize-none outline-none text-sm md:text-[15px] leading-6 text-[#ececec] placeholder:text-[#8e8e8e] disabled:opacity-50 py-2 px-1"
+            className="flex-1 bg-transparent resize-none outline-none text-[13px] md:text-sm leading-5 text-[#ececec] placeholder:text-[#8e8e8e] disabled:opacity-50 py-1.5 px-1"
             style={{
-              minHeight: '24px',
-              maxHeight: '150px',
+              minHeight: '20px',
+              maxHeight: '100px',
             }}
           />
 
@@ -64,13 +64,13 @@ export default function PromptInput({ onSubmit, disabled = false, placeholder }:
           <button
             onClick={handleSubmit}
             disabled={disabled || !value.trim()}
-            className={`flex-shrink-0 p-2 rounded-lg transition-all ${
+            className={`flex-shrink-0 p-1.5 rounded-md transition-all ${
               value.trim()
                 ? 'bg-white text-[#171717] hover:bg-[#ececec]'
                 : 'bg-[#676767] text-[#2f2f2f] cursor-not-allowed'
             }`}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 19V5M5 12l7-7 7 7"/>
             </svg>
           </button>
@@ -78,7 +78,7 @@ export default function PromptInput({ onSubmit, disabled = false, placeholder }:
       </div>
 
       {/* Disclaimer text - shorter on mobile */}
-      <p className="text-xs text-center text-[#8e8e8e] mt-2 md:mt-3">
+      <p className="text-[10px] text-center text-[#8e8e8e] mt-1.5 md:mt-2">
         <span className="hidden md:inline">Guess the prompt that generated this AI response. </span>
         Press Enter to submit
       </p>
