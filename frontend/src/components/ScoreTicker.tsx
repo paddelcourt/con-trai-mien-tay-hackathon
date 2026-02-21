@@ -1,31 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
-export interface LeaderboardEntry {
-  rank: number;
-  username: string;
-  country: string;
-  score: number;
-}
-
-interface ScoreTickerProps {
-  entries?: LeaderboardEntry[];
-}
-
-// Top leaderboard scores - replace with real data from backend
-const mockLeaderboard: LeaderboardEntry[] = [
-  { rank: 1, username: 'maria_ai', country: 'ES', score: 485 },
-  { rank: 2, username: 'kim_lee', country: 'KR', score: 472 },
-  { rank: 3, username: 'sarah_k', country: 'GB', score: 458 },
-  { rank: 4, username: 'pierre_fr', country: 'FR', score: 445 },
-  { rank: 5, username: 'alex_dev', country: 'US', score: 432 },
-  { rank: 6, username: 'yuki_san', country: 'JP', score: 418 },
-  { rank: 7, username: 'tom_coder', country: 'CA', score: 405 },
-  { rank: 8, username: 'hans_de', country: 'DE', score: 392 },
-  { rank: 9, username: 'anna_br', country: 'BR', score: 378 },
-  { rank: 10, username: 'raj_in', country: 'IN', score: 365 },
-];
+import { fetchLeaderboard, LeaderboardEntry } from '@/services/api';
 
 const countryFlags: Record<string, string> = {
   US: '🇺🇸', GB: '🇬🇧', CA: '🇨🇦', AU: '🇦🇺', DE: '🇩🇪',
@@ -34,13 +10,37 @@ const countryFlags: Record<string, string> = {
   VN: '🇻🇳', PH: '🇵🇭', SG: '🇸🇬', OTHER: '🌍',
 };
 
-export default function ScoreTicker({ entries = mockLeaderboard }: ScoreTickerProps) {
+export default function ScoreTicker() {
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [offset, setOffset] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch leaderboard data
+  useEffect(() => {
+    const loadLeaderboard = async () => {
+      try {
+        const data = await fetchLeaderboard(20);
+        setEntries(data);
+      } catch (error) {
+        console.error('Failed to fetch leaderboard:', error);
+        // Keep empty entries on error
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadLeaderboard();
+    // Refresh every 30 seconds
+    const interval = setInterval(loadLeaderboard, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Double the entries for seamless loop
   const allEntries = [...entries, ...entries];
 
   useEffect(() => {
+    if (entries.length === 0) return;
+
     const interval = setInterval(() => {
       setOffset((prev) => {
         const newOffset = prev + 0.5;
@@ -54,6 +54,22 @@ export default function ScoreTicker({ entries = mockLeaderboard }: ScoreTickerPr
 
     return () => clearInterval(interval);
   }, [entries.length]);
+
+  if (isLoading) {
+    return (
+      <div className="bg-[#171717] border-b border-[#2f2f2f] h-8 flex items-center justify-center">
+        <span className="text-xs text-[#8e8e8e]">Loading leaderboard...</span>
+      </div>
+    );
+  }
+
+  if (entries.length === 0) {
+    return (
+      <div className="bg-[#171717] border-b border-[#2f2f2f] h-8 flex items-center justify-center">
+        <span className="text-xs text-[#8e8e8e]">No scores yet - be the first!</span>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#171717] border-b border-[#2f2f2f] overflow-hidden">
@@ -86,3 +102,4 @@ export default function ScoreTicker({ entries = mockLeaderboard }: ScoreTickerPr
 }
 
 export { countryFlags };
+export type { LeaderboardEntry };

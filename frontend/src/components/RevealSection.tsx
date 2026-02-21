@@ -1,7 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getScoreMessage } from '@/data/gameData';
+
+function getScoreMessage(score: number): string {
+  if (score >= 90) return "Incredible! You're a mind reader!";
+  if (score >= 70) return "So close! Great intuition!";
+  if (score >= 50) return "You're on the right track!";
+  if (score >= 30) return "Some good ideas there!";
+  return "Nice try! The answer might surprise you.";
+}
 
 interface RevealSectionProps {
   userGuess: string;
@@ -23,11 +30,14 @@ export default function RevealSection({
   useEffect(() => {
     const timer1 = setTimeout(() => setShowScore(true), 300);
     const timer2 = setTimeout(() => setShowComparison(true), 800);
+    // Auto-advance to next round after 3 seconds
+    const timer3 = setTimeout(() => onNextRound(), 3500);
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
+      clearTimeout(timer3);
     };
-  }, []);
+  }, [onNextRound]);
 
   useEffect(() => {
     if (showScore) {

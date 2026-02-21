@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import LeaderboardModal, { LeaderboardEntry } from './LeaderboardModal';
+import LeaderboardModal from './LeaderboardModal';
+import DatasetModal from './DatasetModal';
 
 interface CompletedRound {
   roundNumber: number;
@@ -16,7 +17,6 @@ interface SidebarProps {
   totalScore: number;
   username?: string;
   country?: string;
-  leaderboard?: LeaderboardEntry[];
   onNewGame?: () => void;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
@@ -35,20 +35,6 @@ const countryFlags: Record<string, string> = {
   VN: '🇻🇳', PH: '🇵🇭', SG: '🇸🇬', OTHER: '🌍',
 };
 
-// Mock leaderboard data - replace with real data
-const mockLeaderboard: LeaderboardEntry[] = [
-  { rank: 1, username: 'maria_ai', country: 'ES', score: 485 },
-  { rank: 2, username: 'kim_lee', country: 'KR', score: 472 },
-  { rank: 3, username: 'sarah_k', country: 'GB', score: 458 },
-  { rank: 4, username: 'pierre_fr', country: 'FR', score: 445 },
-  { rank: 5, username: 'alex_dev', country: 'US', score: 432 },
-  { rank: 6, username: 'yuki_san', country: 'JP', score: 418 },
-  { rank: 7, username: 'tom_coder', country: 'CA', score: 405 },
-  { rank: 8, username: 'hans_de', country: 'DE', score: 392 },
-  { rank: 9, username: 'anna_br', country: 'BR', score: 378 },
-  { rank: 10, username: 'raj_in', country: 'IN', score: 365 },
-];
-
 // Format seconds to MM:SS
 function formatTime(seconds: number): string {
   const mins = Math.floor(seconds / 60);
@@ -61,7 +47,6 @@ export default function Sidebar({
   totalScore,
   username = 'Player',
   country = 'OTHER',
-  leaderboard = mockLeaderboard,
   onNewGame,
   isCollapsed = false,
   onToggleCollapse,
@@ -71,6 +56,7 @@ export default function Sidebar({
   completedRounds,
 }: SidebarProps) {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showDataset, setShowDataset] = useState(false);
 
   // Collapsed sidebar - icons only
   if (isCollapsed) {
@@ -111,17 +97,6 @@ export default function Sidebar({
             </svg>
           </button>
 
-          {/* Search */}
-          <button
-            className="p-2.5 rounded-lg hover:bg-[#212121] transition-colors text-[#8e8e8e] mb-1"
-            title="Search"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="m21 21-4.3-4.3"/>
-            </svg>
-          </button>
-
           {/* Leaderboard */}
           <button
             onClick={() => setShowLeaderboard(true)}
@@ -130,6 +105,17 @@ export default function Sidebar({
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 20V10M12 20V4M6 20v-6"/>
+            </svg>
+          </button>
+
+          {/* Dataset */}
+          <button
+            onClick={() => setShowDataset(true)}
+            className="p-2.5 rounded-lg hover:bg-[#212121] transition-colors text-[#8e8e8e] mb-1"
+            title="Dataset"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18"/>
             </svg>
           </button>
 
@@ -144,10 +130,12 @@ export default function Sidebar({
 
         {/* Leaderboard Modal */}
         {showLeaderboard && (
-          <LeaderboardModal
-            entries={leaderboard}
-            onClose={() => setShowLeaderboard(false)}
-          />
+          <LeaderboardModal onClose={() => setShowLeaderboard(false)} />
+        )}
+
+        {/* Dataset Modal */}
+        {showDataset && (
+          <DatasetModal onClose={() => setShowDataset(false)} />
         )}
       </>
     );
@@ -194,17 +182,6 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* Search Button */}
-        <div className="px-2 mb-1">
-          <button className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#212121] transition-colors text-[#8e8e8e] text-[13px]">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="m21 21-4.3-4.3"/>
-            </svg>
-            Search
-          </button>
-        </div>
-
         {/* Leaderboard Button */}
         <div className="px-2 mb-1">
           <button
@@ -215,6 +192,19 @@ export default function Sidebar({
               <path d="M18 20V10M12 20V4M6 20v-6"/>
             </svg>
             Leaderboard
+          </button>
+        </div>
+
+        {/* Dataset Button */}
+        <div className="px-2 mb-1">
+          <button
+            onClick={() => setShowDataset(true)}
+            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#212121] transition-colors text-[#8e8e8e] text-[13px]"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18"/>
+            </svg>
+            Dataset
           </button>
         </div>
 
@@ -291,13 +281,15 @@ export default function Sidebar({
 
       {/* Leaderboard Modal */}
       {showLeaderboard && (
-        <LeaderboardModal
-          entries={leaderboard}
-          onClose={() => setShowLeaderboard(false)}
-        />
+        <LeaderboardModal onClose={() => setShowLeaderboard(false)} />
+      )}
+
+      {/* Dataset Modal */}
+      {showDataset && (
+        <DatasetModal onClose={() => setShowDataset(false)} />
       )}
     </>
   );
 }
 
-export type { LeaderboardEntry, CompletedRound };
+export type { CompletedRound };
